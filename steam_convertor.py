@@ -18,7 +18,7 @@ intents.message_content = True
 client = discord.Client(intents=intents)
 
 def get_steam_id(username):
-    api_key = ''  # Replace with your own Steam Web API key
+    api_key = steam_api_key
     api_url = f'http://api.steampowered.com/ISteamUser/ResolveVanityURL/v0001/?key={api_key}&vanityurl={username}'
 
     response = requests.get(api_url)
@@ -33,11 +33,11 @@ def get_steam_id(username):
 def insert_user_mapping(steam_id, discord_id):
     # Connect to the MySQL server
     conn = mysql.connector.connect(
-        host='192.168.50.164',
-        port=3306,
-        user='python',
-        password='$M1n1stry$!',
-        database='player_data'
+        host=mysql_config['host'],
+        port=mysql_config['port'],
+        user=mysql_config['user'],
+        password=mysql_config['password'],
+        database=mysql_config['database']
     )  # Connect to the MySQL server
     cursor = conn.cursor()
 
