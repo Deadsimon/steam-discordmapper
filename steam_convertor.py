@@ -1,16 +1,8 @@
 import discord
 import requests
 import mysql.connector
-import config
 
-# Access Discord Bot Token
-discord_token = config.discord_token
-
-# Access Steam API Key
-steam_api_key = config.steam_api_key
-
-# Access MySQL Database Config
-mysql_config = config.mysql_config
+from config import *
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -18,7 +10,7 @@ intents.message_content = True
 client = discord.Client(intents=intents)
 
 def get_steam_id(username):
-    api_key = steam_api_key
+    api_key = steam_api_key  # Replace with your own Steam Web API key
     api_url = f'http://api.steampowered.com/ISteamUser/ResolveVanityURL/v0001/?key={api_key}&vanityurl={username}'
 
     response = requests.get(api_url)
@@ -38,7 +30,7 @@ def insert_user_mapping(steam_id, discord_id):
         user=mysql_config['user'],
         password=mysql_config['password'],
         database=mysql_config['database']
-    )  # Connect to the MySQL server
+    )
     cursor = conn.cursor()
 
     # Create the table if it doesn't exist
@@ -49,15 +41,25 @@ def insert_user_mapping(steam_id, discord_id):
         )
     ''')
 
-    # Insert or replace the user mapping
-    cursor.execute('''
-        INSERT INTO User_mapping (steam_id, discord_id)
-        VALUES (%s, %s)
-        ON DUPLICATE KEY UPDATE discord_id = %s
-    ''', (str(steam_id), int(discord_id), int(discord_id)))
+    try:
+        # Convert to decimal format
+        steam_id_decimal = int(steam_id)
+        discord_id_decimal = int(discord_id)
 
-    conn.commit()  # Commit the changes
+        # Insert or replace the user mapping
+        cursor.execute('''
+            INSERT INTO User_mapping (steam_id, discord_id)
+            VALUES (%s, %s)
+            ON DUPLICATE KEY UPDATE discord_id = %s
+        ''', (steam_id_decimal, discord_id_decimal, discord_id_decimal))
+
+        conn.commit()  # Commit the changes
+        print("Data inserted successfully!")
+    except mysql.connector.Error as error:
+        print("Error inserting data:", error)
+
     conn.close()  # Close the database connection
+
 
 @client.event
 async def on_ready():
@@ -80,7 +82,7 @@ async def on_message(message):
         if steam_id:
             insert_user_mapping(steam_id, message.author.id)  # Insert user mapping into the database
 
-            response = f'User mapping for {username} has been created.'
+            response = f'SteamID64 for {username}: {steam_id}\nDiscord ID: {message.author.id}'
             await message.channel.send(response)
         else:
             await message.channel.send(f'Unable to find SteamID64 for {username}')
