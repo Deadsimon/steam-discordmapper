@@ -18,7 +18,7 @@ intents.message_content = True
 client = discord.Client(intents=intents)
 
 def get_steam_id(username):
-    api_key = '595337B9C677D4ADDFF1A88A75F869C1'  # Replace with your own Steam Web API key
+    api_key = ''  # Replace with your own Steam Web API key
     api_url = f'http://api.steampowered.com/ISteamUser/ResolveVanityURL/v0001/?key={api_key}&vanityurl={username}'
 
     response = requests.get(api_url)
