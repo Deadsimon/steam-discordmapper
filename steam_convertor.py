@@ -85,4 +85,4 @@ async def on_message(message):
         else:
             await message.channel.send(f'Unable to find SteamID64 for {username}')
 
-client.run('MTEwNjI1ODMwNDczODU0MTY3OQ.GnoTzV.KUysgKjsXvQRrcjmNu3bT3Ezbs9acL53gMfUis')
+client.run(discord_token)

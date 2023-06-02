@@ -8,9 +8,9 @@ steam_api_key = "YOUR_STEAM_API_KEY"
 
 # MySQL Database Config
 mysql_config = {
-    "host": "192.168.50.164",
+    "host": "",
     "port": 3306,
-    "user": "python",
-    "password": "$M1n1stry$!",
-    "database": "player_data"
+    "user": "",
+    "password": "!",
+    "database": ""
 }
